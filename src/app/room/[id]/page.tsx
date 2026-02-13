@@ -21,8 +21,9 @@ export default function PlayerRoomPage({
   const [room, setRoom] = useState<Room | null>(null);
   const [ticket, setTicket] = useState<LotoTicket | null>(null);
   const [calledNumbers, setCalledNumbers] = useState<number[]>([]);
-  const [manuallyMarkedNumbers, setManuallyMarkedNumbers] = useState<Set<number>>(new Set());
-  const [isMarkingMode, setIsMarkingMode] = useState(false);
+  const [manuallyMarkedNumbers, setManuallyMarkedNumbers] = useState<
+    Set<number>
+  >(new Set());
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState('');
 
@@ -94,8 +95,6 @@ export default function PlayerRoomPage({
 
   // Handle manual marking
   const handleNumberClick = (number: number) => {
-    if (!isMarkingMode) return;
-    
     setManuallyMarkedNumbers((prev) => {
       const newSet = new Set(prev);
       if (newSet.has(number)) {
@@ -210,55 +209,27 @@ export default function PlayerRoomPage({
         {/* Ticket Display */}
         <div className="rounded-lg bg-white p-6 shadow-lg">
           <div className="flex items-center justify-between mb-4">
-            <h2 className="text-xl font-semibold text-gray-900">Your Ticket</h2>
-            <div className="flex items-center gap-3">
-              <span className="text-sm text-gray-500">
-                ID: {ticket.id.substring(0, 8)}...
-              </span>
-              <button
-                onClick={() => setIsMarkingMode(!isMarkingMode)}
-                className={`flex items-center gap-2 rounded-lg px-4 py-2 font-medium transition-colors ${
-                  isMarkingMode
-                    ? 'bg-blue-600 text-white hover:bg-blue-700'
-                    : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
-                }`}
-              >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="h-5 w-5"
-                  viewBox="0 0 20 20"
-                  fill="currentColor"
-                >
-                  <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z" />
-                </svg>
-                {isMarkingMode ? 'Marking Mode ON' : 'Tap to Mark'}
-              </button>
-            </div>
+            <h2 className="text-xl font-semibold text-gray-900">LOTO</h2>
+            <span className="text-sm text-gray-500">
+              ID: {ticket.id.substring(0, 8)}...
+            </span>
           </div>
-
-          {isMarkingMode && (
-            <div className="mb-4 p-3 bg-blue-50 border border-blue-200 rounded-lg">
-              <p className="text-sm text-blue-800">
-                ✏️ <strong>Marking mode is active.</strong> Tap numbers on your ticket to mark them.
-              </p>
-            </div>
-          )}
 
           {/* Use TicketDisplay Component */}
           <TicketDisplay
             ticketData={ticket.ticket_data}
             markedNumbers={manuallyMarkedNumbers}
-            onCellClick={isMarkingMode ? handleNumberClick : undefined}
+            onCellClick={handleNumberClick}
             size="lg"
           />
         </div>
 
         {/* Win Progress Indicator */}
-        {numbersToWin && !winResult.hasWon && (
+        {/* {numbersToWin && !winResult.hasWon && (
           <div className="rounded-lg bg-white p-6 shadow-lg">
             <WinProgressIndicator numbersToWin={numbersToWin} />
           </div>
-        )}
+        )} */}
 
         {/* Called Numbers History */}
         <div className="rounded-lg bg-white p-6 shadow-lg">

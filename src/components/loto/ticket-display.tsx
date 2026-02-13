@@ -19,16 +19,16 @@ interface TicketDisplayProps {
 
 const sizeClasses = {
   sm: {
-    cell: 'text-xs sm:text-sm h-10 sm:h-12',
-    fontSize: 'text-xs sm:text-sm'
+    cell: 'h-10 sm:h-12',
+    fontSize: 'text-xl sm:text-2xl'
   },
   md: {
-    cell: 'text-sm sm:text-base md:text-lg h-12 sm:h-14 md:h-16',
-    fontSize: 'text-sm sm:text-base md:text-lg'
+    cell: 'h-12 sm:h-14 md:h-16',
+    fontSize: 'text-2xl sm:text-3xl md:text-4xl'
   },
   lg: {
-    cell: 'text-base sm:text-lg md:text-xl h-14 sm:h-16 md:h-20',
-    fontSize: 'text-base sm:text-lg md:text-xl'
+    cell: 'h-14 sm:h-16 md:h-20',
+    fontSize: 'text-3xl sm:text-4xl md:text-5xl'
   }
 };
 
@@ -43,6 +43,142 @@ const ticketColors = [
   'bg-red-100',
   'bg-teal-100'
 ];
+
+/**
+ * Calligraphic Brush-Stroke X SVG Component
+ * Animated drawing with refined calligraphic style and ink-bleed texture
+ */
+function BrushStrokeX() {
+  return (
+    <svg
+      viewBox="0 0 100 100"
+      className="absolute inset-0 m-auto pointer-events-none z-10"
+      style={{
+        width: '80%',
+        height: '80%'
+      }}
+    >
+      <defs>
+        {/* Ink bleed effect with turbulence */}
+        <filter id="inkBleed" x="-50%" y="-50%" width="200%" height="200%">
+          <feTurbulence
+            type="fractalNoise"
+            baseFrequency="0.8"
+            numOctaves="4"
+            seed="2"
+            result="turbulence"
+          />
+          <feDisplacementMap
+            in="SourceGraphic"
+            in2="turbulence"
+            scale="1.5"
+            xChannelSelector="R"
+            yChannelSelector="G"
+            result="displacement"
+          />
+          <feGaussianBlur stdDeviation="0.3" result="blur" />
+          <feComposite in="SourceGraphic" in2="blur" operator="over" />
+        </filter>
+
+        {/* Soft edge glow */}
+        <filter id="softGlow">
+          <feGaussianBlur stdDeviation="0.5" result="coloredBlur" />
+          <feMerge>
+            <feMergeNode in="coloredBlur" />
+            <feMergeNode in="SourceGraphic" />
+          </feMerge>
+        </filter>
+      </defs>
+
+      {/* First stroke: top-left to bottom-right with animation */}
+      <path
+        d="M 20,15 Q 35,30 50,50 Q 65,70 80,85"
+        stroke="#b31d1d"
+        strokeWidth="10"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        fill="none"
+        opacity="0.7"
+        filter="url(#inkBleed)"
+        strokeDasharray="100"
+        strokeDashoffset="100"
+        style={{
+          animation: 'drawStroke 0.3s ease-out forwards'
+        }}
+      >
+        <animate
+          attributeName="stroke-width"
+          values="8;10;12;10"
+          dur="0.3s"
+          fill="freeze"
+        />
+      </path>
+
+      {/* Second stroke: top-right to bottom-left with delayed animation */}
+      <path
+        d="M 80,15 Q 65,30 50,50 Q 35,70 20,85"
+        stroke="#b31d1d"
+        strokeWidth="10"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        fill="none"
+        opacity="0.7"
+        filter="url(#inkBleed)"
+        strokeDasharray="100"
+        strokeDashoffset="100"
+        style={{
+          animation: 'drawStroke 0.3s ease-out 0.15s forwards'
+        }}
+      >
+        <animate
+          attributeName="stroke-width"
+          values="8;10;12;10"
+          dur="0.3s"
+          begin="0.15s"
+          fill="freeze"
+        />
+      </path>
+
+      {/* Subtle accent strokes for depth */}
+      <path
+        d="M 25,20 L 50,45"
+        stroke="#b31d1d"
+        strokeWidth="6"
+        strokeLinecap="round"
+        fill="none"
+        opacity="0.4"
+        filter="url(#softGlow)"
+        strokeDasharray="40"
+        strokeDashoffset="40"
+        style={{
+          animation: 'drawStroke 0.2s ease-out 0.1s forwards'
+        }}
+      />
+      <path
+        d="M 75,20 L 50,45"
+        stroke="#b31d1d"
+        strokeWidth="6"
+        strokeLinecap="round"
+        fill="none"
+        opacity="0.4"
+        filter="url(#softGlow)"
+        strokeDasharray="40"
+        strokeDashoffset="40"
+        style={{
+          animation: 'drawStroke 0.2s ease-out 0.25s forwards'
+        }}
+      />
+
+      <style>{`
+        @keyframes drawStroke {
+          to {
+            stroke-dashoffset: 0;
+          }
+        }
+      `}</style>
+    </svg>
+  );
+}
 
 /**
  * TicketDisplay Component
@@ -119,15 +255,16 @@ export function TicketDisplay({
                         onClick={() => cell && onCellClick?.(cell)}
                         disabled={!onCellClick}
                         className={cn(
-                          'w-full h-full flex items-center justify-center font-bold transition-all duration-200',
-                          sizeConfig.fontSize,
+                          'w-full h-full flex items-center justify-center font-bold transition-all duration-200 relative',
                           'bg-white text-black',
-                          isMarked && 'bg-green-500 text-white shadow-lg',
                           isClickable &&
                             !isMarked &&
                             'hover:bg-gray-100 active:scale-95',
                           isClickable ? 'cursor-pointer' : 'cursor-default'
                         )}
+                        style={{
+                          fontSize: 'clamp(1rem, 5.7vw, 4rem)'
+                        }}
                         aria-label={
                           isMarked
                             ? `Number ${cell} - marked`
@@ -135,6 +272,8 @@ export function TicketDisplay({
                         }
                       >
                         {cell}
+                        {/* Brush-stroke X overlay for marked numbers */}
+                        {isMarked && <BrushStrokeX />}
                       </button>
                     )}
                   </td>
@@ -198,18 +337,22 @@ export function CompactTicketDisplay({
                     key={`${rowIndex}-${colIndex}`}
                     className={cn(
                       'border border-black/30 text-center align-middle h-8 sm:h-10',
-                      'text-xs sm:text-sm font-semibold'
+                      'font-semibold'
                     )}
                   >
                     {!isEmpty && (
                       <div
                         className={cn(
-                          'w-full h-full flex items-center justify-center',
-                          'bg-white text-black',
-                          isMarked && 'bg-green-400 text-white'
+                          'w-full h-full flex items-center justify-center relative',
+                          'bg-white text-black font-bold'
                         )}
+                        style={{
+                          fontSize: 'clamp(0.75rem, 5.67vw, 2rem)'
+                        }}
                       >
                         {cell}
+                        {/* Brush-stroke X overlay for marked numbers */}
+                        {isMarked && <BrushStrokeX />}
                       </div>
                     )}
                   </td>
@@ -276,11 +419,16 @@ export function PrintableTicketDisplay({
                   key={`${rowIndex}-${colIndex}`}
                   className={cn(
                     'border border-black/30 text-center align-middle h-12',
-                    'text-base font-bold aspect-[3/4]'
+                    'font-bold aspect-[3/4]'
                   )}
                 >
                   {cell !== null && (
-                    <div className="w-full h-full flex items-center justify-center bg-white text-black">
+                    <div
+                      className="w-full h-full flex items-center justify-center bg-white text-black"
+                      style={{
+                        fontSize: 'clamp(1rem, 6.67vw, 3rem)'
+                      }}
+                    >
                       {cell}
                     </div>
                   )}
