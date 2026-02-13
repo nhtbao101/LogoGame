@@ -23,15 +23,47 @@ function ApricotBlossom() {
       <g>
         {/* Petals */}
         <ellipse cx="50" cy="25" rx="12" ry="18" fill="#FFD700" opacity="0.9" />
-        <ellipse cx="75" cy="50" rx="12" ry="18" fill="#FFD700" opacity="0.9" transform="rotate(72 50 50)" />
-        <ellipse cx="63" cy="82" rx="12" ry="18" fill="#FFD700" opacity="0.9" transform="rotate(144 50 50)" />
-        <ellipse cx="37" cy="82" rx="12" ry="18" fill="#FFD700" opacity="0.9" transform="rotate(216 50 50)" />
-        <ellipse cx="25" cy="50" rx="12" ry="18" fill="#FFD700" opacity="0.9" transform="rotate(288 50 50)" />
-        
+        <ellipse
+          cx="75"
+          cy="50"
+          rx="12"
+          ry="18"
+          fill="#FFD700"
+          opacity="0.9"
+          transform="rotate(72 50 50)"
+        />
+        <ellipse
+          cx="63"
+          cy="82"
+          rx="12"
+          ry="18"
+          fill="#FFD700"
+          opacity="0.9"
+          transform="rotate(144 50 50)"
+        />
+        <ellipse
+          cx="37"
+          cy="82"
+          rx="12"
+          ry="18"
+          fill="#FFD700"
+          opacity="0.9"
+          transform="rotate(216 50 50)"
+        />
+        <ellipse
+          cx="25"
+          cy="50"
+          rx="12"
+          ry="18"
+          fill="#FFD700"
+          opacity="0.9"
+          transform="rotate(288 50 50)"
+        />
+
         {/* Center */}
         <circle cx="50" cy="50" r="8" fill="#FFA500" />
         <circle cx="50" cy="50" r="5" fill="#FF8C00" />
-        
+
         {/* Stamens */}
         <circle cx="50" cy="50" r="2" fill="#8B4513" opacity="0.6" />
         <circle cx="54" cy="48" r="1.5" fill="#8B4513" opacity="0.5" />
@@ -45,13 +77,13 @@ function ApricotBlossom() {
 
 /**
  * TetLotoTicket Component
- * 
+ *
  * Vietnamese Lunar New Year (Tết) themed Loto ticket with traditional styling:
  * - Deep red background with silk pattern
  * - Metallic gold accents and borders
  * - Apricot blossom decorations
  * - Calligraphic Vietnamese styling
- * 
+ *
  * @example
  * ```tsx
  * <TetLotoTicket

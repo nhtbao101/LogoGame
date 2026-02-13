@@ -33,28 +33,36 @@ export default function HostGamePage({
   useEffect(() => {
     if (!roomId) return;
 
-    const fetchData = async () => {
+    const fetchRoom = async () => {
       try {
-        // Fetch room
         const roomResponse = await fetch(`/api/rooms/${roomId}`);
         if (roomResponse.ok) {
           const roomData = await roomResponse.json();
           setRoom(roomData.room);
         }
+      } catch (err) {
+        console.error('Failed to fetch room:', err);
+      }
+    };
 
-        // Fetch called numbers
+    const fetchNumbers = async () => {
+      try {
         const numbersResponse = await fetch(`/api/rooms/${roomId}/numbers`);
         if (numbersResponse.ok) {
           const numbersData = await numbersResponse.json();
           setCalledNumbers(numbersData.numbers);
         }
       } catch (err) {
-        console.error('Failed to fetch data:', err);
+        console.error('Failed to fetch numbers:', err);
       }
     };
 
-    fetchData();
-    const interval = setInterval(fetchData, 3000);
+    // Initial fetch
+    fetchRoom(); // Fetch room once
+    fetchNumbers();
+
+    // Only poll called numbers (they change frequently)
+    const interval = setInterval(fetchNumbers, 5000);
     return () => clearInterval(interval);
   }, [roomId]);
 

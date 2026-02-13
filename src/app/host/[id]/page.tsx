@@ -71,7 +71,7 @@ export default function HostRoomPage({
     };
 
     fetchNumbers();
-    const interval = setInterval(fetchNumbers, 3000);
+    const interval = setInterval(fetchNumbers, 5000);
     return () => clearInterval(interval);
   }, [roomId]);
 

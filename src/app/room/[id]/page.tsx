@@ -81,7 +81,7 @@ export default function PlayerRoomPage({
     };
 
     fetchNumbers();
-    const interval = setInterval(fetchNumbers, 3000);
+    const interval = setInterval(fetchNumbers, 100000);
     return () => clearInterval(interval);
   }, [roomId]);
 
@@ -124,7 +124,9 @@ export default function PlayerRoomPage({
       <div className="flex min-h-screen items-center justify-center p-4">
         <div className="text-center">
           <h1 className="text-2xl font-bold text-red-600 mb-4">Lỗi</h1>
-          <p className="text-gray-600 mb-4">{error || 'Không tìm thấy phòng'}</p>
+          <p className="text-gray-600 mb-4">
+            {error || 'Không tìm thấy phòng'}
+          </p>
           <button
             onClick={() => router.push('/')}
             className="rounded-lg bg-blue-600 px-6 py-2 text-white hover:bg-blue-700"
@@ -156,7 +158,11 @@ export default function PlayerRoomPage({
                     : 'text-gray-600'
                 }`}
               >
-                {room.status === 'waiting' ? 'Đang chờ' : room.status === 'active' ? 'Đang chơi' : 'Đã kết thúc'}
+                {room.status === 'waiting'
+                  ? 'Đang chờ'
+                  : room.status === 'active'
+                  ? 'Đang chơi'
+                  : 'Đã kết thúc'}
               </span>
             </p>
           </div>
@@ -209,13 +215,6 @@ export default function PlayerRoomPage({
             onCellClick={handleNumberClick}
           />
         </div>
-
-        {/* Win Progress Indicator */}
-        {/* {numbersToWin && !winResult.hasWon && (
-          <div className="rounded-lg bg-white p-6 shadow-lg">
-            <WinProgressIndicator numbersToWin={numbersToWin} />
-          </div>
-        )} */}
 
         {/* Called Numbers History */}
         <div className="rounded-lg bg-white p-6 shadow-lg">

@@ -25,7 +25,8 @@ $tet-burgundy: #5a0f0f;
   animation: shimmer 3s ease-in-out infinite;
 
   @keyframes shimmer {
-    0%, 100% {
+    0%,
+    100% {
       background-position: 0% 50%;
     }
     50% {
@@ -42,7 +43,7 @@ $tet-burgundy: #5a0f0f;
   position: relative;
   overflow: hidden;
   margin-bottom: 8px;
-  
+
   &::before {
     content: '';
     position: absolute;
@@ -50,9 +51,16 @@ $tet-burgundy: #5a0f0f;
     left: 0;
     right: 0;
     height: 100%;
-    background-image: 
-      radial-gradient(circle at 20% 50%, rgba(255, 255, 255, 0.1) 0%, transparent 50%),
-      radial-gradient(circle at 80% 50%, rgba(255, 255, 255, 0.1) 0%, transparent 50%);
+    background-image: radial-gradient(
+        circle at 20% 50%,
+        rgba(255, 255, 255, 0.1) 0%,
+        transparent 50%
+      ),
+      radial-gradient(
+        circle at 80% 50%,
+        rgba(255, 255, 255, 0.1) 0%,
+        transparent 50%
+      );
     pointer-events: none;
   }
 
@@ -106,14 +114,13 @@ $tet-burgundy: #5a0f0f;
 // Grid Container
 .gridContainer {
   background: $tet-red;
-  background-image: 
-    repeating-linear-gradient(
-      45deg,
-      transparent,
-      transparent 10px,
-      rgba(0, 0, 0, 0.05) 10px,
-      rgba(0, 0, 0, 0.05) 20px
-    );
+  background-image: repeating-linear-gradient(
+    45deg,
+    transparent,
+    transparent 10px,
+    rgba(0, 0, 0, 0.05) 10px,
+    rgba(0, 0, 0, 0.05) 20px
+  );
   padding: 4px;
   border-radius: 0 0 8px 8px;
   position: relative;
@@ -146,8 +153,7 @@ $tet-burgundy: #5a0f0f;
     cursor: pointer;
 
     &:hover {
-      box-shadow: 
-        0 0 12px rgba(212, 163, 54, 0.6),
+      box-shadow: 0 0 12px rgba(212, 163, 54, 0.6),
         inset 0 0 8px rgba(255, 215, 0, 0.2);
       transform: scale(1.05);
     }
@@ -172,8 +178,7 @@ $tet-burgundy: #5a0f0f;
   line-height: 1;
   position: relative;
   z-index: 1;
-  text-shadow: 
-    1px 1px 0px rgba(255, 255, 255, 0.5),
+  text-shadow: 1px 1px 0px rgba(255, 255, 255, 0.5),
     -1px -1px 0px rgba(0, 0, 0, 0.1);
 }
 
@@ -187,9 +192,20 @@ $tet-burgundy: #5a0f0f;
     transform: translate(-50%, -50%);
     width: 60%;
     height: 60%;
-    background: 
-      linear-gradient(45deg, transparent 45%, rgba(212, 163, 54, 0.85) 45%, rgba(212, 163, 54, 0.85) 55%, transparent 55%),
-      linear-gradient(-45deg, transparent 45%, rgba(212, 163, 54, 0.85) 45%, rgba(212, 163, 54, 0.85) 55%, transparent 55%);
+    background: linear-gradient(
+        45deg,
+        transparent 45%,
+        rgba(212, 163, 54, 0.85) 45%,
+        rgba(212, 163, 54, 0.85) 55%,
+        transparent 55%
+      ),
+      linear-gradient(
+        -45deg,
+        transparent 45%,
+        rgba(212, 163, 54, 0.85) 45%,
+        rgba(212, 163, 54, 0.85) 55%,
+        transparent 55%
+      );
     pointer-events: none;
     z-index: 2;
     filter: drop-shadow(0 0 3px rgba(255, 215, 0, 0.9));
