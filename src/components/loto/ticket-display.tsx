@@ -1,5 +1,6 @@
 import { cn } from '@/lib/utils';
 import type { TicketGrid } from '@/types/loto';
+import { useMemo } from 'react';
 
 interface TicketDisplayProps {
   /** The 3x9 ticket grid with numbers and nulls */
@@ -18,26 +19,39 @@ interface TicketDisplayProps {
 
 const sizeClasses = {
   sm: {
-    cell: 'text-sm h-8 w-8',
-    grid: 'gap-1'
+    cell: 'text-xs sm:text-sm h-10 sm:h-12',
+    fontSize: 'text-xs sm:text-sm'
   },
   md: {
-    cell: 'text-lg h-12 w-12',
-    grid: 'gap-2'
+    cell: 'text-sm sm:text-base md:text-lg h-12 sm:h-14 md:h-16',
+    fontSize: 'text-sm sm:text-base md:text-lg'
   },
   lg: {
-    cell: 'text-xl h-16 w-16',
-    grid: 'gap-3'
+    cell: 'text-base sm:text-lg md:text-xl h-14 sm:h-16 md:h-20',
+    fontSize: 'text-base sm:text-lg md:text-xl'
   }
 };
+
+// Random background colors for the ticket (Vietnamese paper ticket aesthetic)
+const ticketColors = [
+  'bg-orange-100',
+  'bg-yellow-100',
+  'bg-green-100',
+  'bg-blue-100',
+  'bg-pink-100',
+  'bg-purple-100',
+  'bg-red-100',
+  'bg-teal-100'
+];
 
 /**
  * TicketDisplay Component
  *
- * Displays a 3x9 Loto ticket with visual distinction for:
- * - Empty cells (null values)
- * - Unmarked numbers
- * - Marked/called numbers
+ * Displays a 3x9 Loto ticket that looks like a traditional Vietnamese paper ticket:
+ * - Table-based layout with thick outer border
+ * - Random background color for the ticket
+ * - White cells with black text
+ * - Cells slightly taller than wide (aspect-[3/4])
  *
  * @example
  * ```tsx
@@ -58,75 +72,81 @@ export function TicketDisplay({
 }: TicketDisplayProps) {
   const sizeConfig = sizeClasses[size];
 
+  // Generate random background color once per ticket (stable across renders)
+  const backgroundColor = useMemo(() => {
+    const randomIndex =
+      Math.floor(ticketData[0][0] ?? 0 * ticketColors.length) %
+      ticketColors.length;
+    return ticketColors[randomIndex];
+  }, [ticketData]);
+
   return (
-    <div className={cn('w-full', className)}>
-      {/* Column Headers (optional) */}
-      {/* <div className="grid grid-cols-9 gap-2 mb-2">
-        {[1, 2, 3, 4, 5, 6, 7, 8, 9].map((col) => (
-          <div key={col} className="text-center text-xs text-gray-500">
-            {col}
-          </div>
-        ))}
-      </div> */}
+    <div className={cn('w-full overflow-x-auto', className)}>
+      {/* Ticket Table */}
+      <table
+        className={cn(
+          'w-full border-collapse border-4 border-black table-fixed',
+          backgroundColor
+        )}
+      >
+        <tbody>
+          {ticketData.map((row, rowIndex) => (
+            <tr key={rowIndex}>
+              {/* Row Label (optional) */}
+              {showRowLabels && (
+                <td className="text-xs text-gray-700 text-center px-2 font-semibold border border-black/20">
+                  {rowIndex + 1}
+                </td>
+              )}
 
-      {/* Ticket Grid */}
-      <div className="space-y-1">
-        {ticketData.map((row, rowIndex) => (
-          <div key={rowIndex} className="flex items-center gap-1">
-            {/* Row Label (optional) */}
-            {showRowLabels && (
-              <div className="w-6 text-xs text-gray-500 text-center">
-                {rowIndex + 1}
-              </div>
-            )}
-
-            {/* Row Cells */}
-            <div className={cn('grid grid-cols-9 flex-1', sizeConfig.grid)}>
+              {/* Row Cells */}
               {row.map((cell, colIndex) => {
                 const isEmpty = cell === null;
                 const isMarked = cell !== null && markedNumbers.has(cell);
                 const isClickable = !isEmpty && onCellClick;
 
                 return (
-                  <button
+                  <td
                     key={`${rowIndex}-${colIndex}`}
-                    onClick={() => cell && onCellClick?.(cell)}
-                    disabled={isEmpty || !onCellClick}
                     className={cn(
-                      'flex items-center justify-center rounded-lg font-bold transition-all duration-200',
-                      sizeConfig.cell,
-                      isEmpty && 'bg-gray-100 cursor-default',
-                      !isEmpty &&
-                        !isMarked &&
-                        'bg-white border-2 border-gray-300 text-gray-900',
-                      !isEmpty &&
-                        isMarked &&
-                        'bg-green-500 text-white shadow-lg scale-105',
-                      isClickable &&
-                        !isMarked &&
-                        'hover:bg-gray-50 hover:border-blue-400 active:scale-95',
-                      isClickable && 'cursor-pointer',
-                      !isClickable && !isEmpty && 'cursor-default'
+                      'border border-black/30 text-center align-middle',
+                      'aspect-[3/4] relative',
+                      sizeConfig.cell
                     )}
-                    aria-label={
-                      isEmpty
-                        ? 'Empty cell'
-                        : isMarked
-                        ? `Number ${cell} - marked`
-                        : `Number ${cell}`
-                    }
                   >
-                    {cell}
-                  </button>
+                    {!isEmpty && (
+                      <button
+                        onClick={() => cell && onCellClick?.(cell)}
+                        disabled={!onCellClick}
+                        className={cn(
+                          'w-full h-full flex items-center justify-center font-bold transition-all duration-200',
+                          sizeConfig.fontSize,
+                          'bg-white text-black',
+                          isMarked && 'bg-green-500 text-white shadow-lg',
+                          isClickable &&
+                            !isMarked &&
+                            'hover:bg-gray-100 active:scale-95',
+                          isClickable ? 'cursor-pointer' : 'cursor-default'
+                        )}
+                        aria-label={
+                          isMarked
+                            ? `Number ${cell} - marked`
+                            : `Number ${cell}`
+                        }
+                      >
+                        {cell}
+                      </button>
+                    )}
+                  </td>
                 );
               })}
-            </div>
-          </div>
-        ))}
-      </div>
+            </tr>
+          ))}
+        </tbody>
+      </table>
 
       {/* Ticket Info */}
-      <div className="mt-3 flex justify-between text-xs text-gray-600">
+      <div className="mt-2 flex justify-between text-xs text-gray-600 px-1">
         <span>
           Row 1: {ticketData[0].filter((c) => c !== null).length} numbers
         </span>
@@ -144,35 +164,61 @@ export function TicketDisplay({
 /**
  * CompactTicketDisplay Component
  *
- * Minimal version without borders and styling for printing or previews
+ * Minimal version using table layout for previews
  */
 export function CompactTicketDisplay({
   ticketData,
   markedNumbers = new Set(),
   className
 }: Omit<TicketDisplayProps, 'size' | 'onCellClick' | 'showRowLabels'>) {
-  return (
-    <div className={cn('w-full', className)}>
-      <div className="grid grid-cols-9 gap-1">
-        {ticketData.flat().map((cell, index) => {
-          const isEmpty = cell === null;
-          const isMarked = cell !== null && markedNumbers.has(cell);
+  const backgroundColor = useMemo(() => {
+    const randomIndex =
+      Math.floor(ticketData[0][0] ?? 0 * ticketColors.length) %
+      ticketColors.length;
+    return ticketColors[randomIndex];
+  }, [ticketData]);
 
-          return (
-            <div
-              key={index}
-              className={cn(
-                'flex items-center justify-center h-8 w-8 text-sm font-semibold rounded',
-                isEmpty && 'bg-gray-50',
-                !isEmpty && !isMarked && 'bg-white border border-gray-300',
-                !isEmpty && isMarked && 'bg-green-400 text-white'
-              )}
-            >
-              {cell}
-            </div>
-          );
-        })}
-      </div>
+  return (
+    <div className={cn('w-full overflow-x-auto', className)}>
+      <table
+        className={cn(
+          'w-full border-collapse border-2 border-black table-fixed',
+          backgroundColor
+        )}
+      >
+        <tbody>
+          {ticketData.map((row, rowIndex) => (
+            <tr key={rowIndex}>
+              {row.map((cell, colIndex) => {
+                const isEmpty = cell === null;
+                const isMarked = cell !== null && markedNumbers.has(cell);
+
+                return (
+                  <td
+                    key={`${rowIndex}-${colIndex}`}
+                    className={cn(
+                      'border border-black/30 text-center align-middle h-8 sm:h-10',
+                      'text-xs sm:text-sm font-semibold'
+                    )}
+                  >
+                    {!isEmpty && (
+                      <div
+                        className={cn(
+                          'w-full h-full flex items-center justify-center',
+                          'bg-white text-black',
+                          isMarked && 'bg-green-400 text-white'
+                        )}
+                      >
+                        {cell}
+                      </div>
+                    )}
+                  </td>
+                );
+              })}
+            </tr>
+          ))}
+        </tbody>
+      </table>
     </div>
   );
 }
@@ -180,7 +226,7 @@ export function CompactTicketDisplay({
 /**
  * PrintableTicketDisplay Component
  *
- * Optimized for printing with minimal colors and clear borders
+ * Optimized for printing with table layout and clear borders
  */
 export function PrintableTicketDisplay({
   ticketData,
@@ -193,15 +239,17 @@ export function PrintableTicketDisplay({
   roomCode?: string;
   className?: string;
 }) {
+  const backgroundColor = useMemo(() => {
+    const randomIndex =
+      Math.floor(ticketData[0][0] ?? 0 * ticketColors.length) %
+      ticketColors.length;
+    return ticketColors[randomIndex];
+  }, [ticketData]);
+
   return (
-    <div
-      className={cn(
-        'border-2 border-gray-800 rounded-lg p-4 bg-white print:break-inside-avoid',
-        className
-      )}
-    >
+    <div className={cn('p-4 bg-white print:break-inside-avoid', className)}>
       {/* Header */}
-      <div className="flex justify-between items-center mb-3 pb-2 border-b border-gray-300">
+      <div className="flex justify-between items-center mb-3 pb-2 border-b-2 border-gray-800">
         <h3 className="font-bold text-lg">LOTO TICKET</h3>
         <div className="text-right text-sm">
           {roomCode && <div className="font-bold">Room: {roomCode}</div>}
@@ -213,23 +261,38 @@ export function PrintableTicketDisplay({
         </div>
       </div>
 
-      {/* Ticket Grid */}
-      <div className="grid grid-cols-9 gap-1">
-        {ticketData.flat().map((cell, index) => (
-          <div
-            key={index}
-            className={cn(
-              'flex items-center justify-center h-10 w-10 text-base font-bold border border-gray-400 rounded',
-              cell === null ? 'bg-gray-100' : 'bg-white'
-            )}
-          >
-            {cell}
-          </div>
-        ))}
-      </div>
+      {/* Ticket Table */}
+      <table
+        className={cn(
+          'w-full border-collapse border-4 border-black table-fixed',
+          backgroundColor
+        )}
+      >
+        <tbody>
+          {ticketData.map((row, rowIndex) => (
+            <tr key={rowIndex}>
+              {row.map((cell, colIndex) => (
+                <td
+                  key={`${rowIndex}-${colIndex}`}
+                  className={cn(
+                    'border border-black/30 text-center align-middle h-12',
+                    'text-base font-bold aspect-[3/4]'
+                  )}
+                >
+                  {cell !== null && (
+                    <div className="w-full h-full flex items-center justify-center bg-white text-black">
+                      {cell}
+                    </div>
+                  )}
+                </td>
+              ))}
+            </tr>
+          ))}
+        </tbody>
+      </table>
 
       {/* Footer */}
-      <div className="mt-3 pt-2 border-t border-gray-300 text-xs text-gray-600 text-center">
+      <div className="mt-3 pt-2 border-t-2 border-gray-800 text-xs text-gray-600 text-center">
         Mark numbers as they are called • Good luck!
       </div>
     </div>
