@@ -5,7 +5,6 @@ import { useRouter } from 'next/navigation';
 import { getOrCreateGuestId } from '@/utils/guest';
 import { LotoLogo } from '@/components/ui/loto-logo';
 import { Background } from '@/components/layout/background';
-import { Footer } from '@/components/layout/footer';
 
 export default function Home() {
   const router = useRouter();
@@ -156,7 +155,6 @@ export default function Home() {
           </div>
         </main>
       </div>
-      <Footer />
     </Background>
   );
 }
