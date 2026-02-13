@@ -21,6 +21,8 @@ export default function PlayerRoomPage({
   const [room, setRoom] = useState<Room | null>(null);
   const [ticket, setTicket] = useState<LotoTicket | null>(null);
   const [calledNumbers, setCalledNumbers] = useState<number[]>([]);
+  const [manuallyMarkedNumbers, setManuallyMarkedNumbers] = useState<Set<number>>(new Set());
+  const [isMarkingMode, setIsMarkingMode] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState('');
 
@@ -86,21 +88,31 @@ export default function PlayerRoomPage({
   }, [roomId]);
 
   // Count marked numbers in ticket
-  const markedCount =
-    ticket?.ticket_data
-      .flat()
-      .filter((cell) => cell !== null && calledNumbers.includes(cell)).length ||
-    0;
+  const markedCount = manuallyMarkedNumbers.size;
   const totalNumbers =
     ticket?.ticket_data.flat().filter((cell) => cell !== null).length || 15;
-  const markedNumbersSet = new Set(calledNumbers);
 
-  // Win detection
+  // Handle manual marking
+  const handleNumberClick = (number: number) => {
+    if (!isMarkingMode) return;
+    
+    setManuallyMarkedNumbers((prev) => {
+      const newSet = new Set(prev);
+      if (newSet.has(number)) {
+        newSet.delete(number);
+      } else {
+        newSet.add(number);
+      }
+      return newSet;
+    });
+  };
+
+  // Win detection using manually marked numbers
   const winResult = ticket
-    ? checkWinCondition(ticket.ticket_data, markedNumbersSet)
+    ? checkWinCondition(ticket.ticket_data, manuallyMarkedNumbers)
     : { hasWon: false, completedRows: [] };
   const numbersToWin = ticket
-    ? getNumbersToWin(ticket.ticket_data, markedNumbersSet)
+    ? getNumbersToWin(ticket.ticket_data, manuallyMarkedNumbers)
     : null;
 
   if (isLoading) {
@@ -195,29 +207,48 @@ export default function PlayerRoomPage({
             </div>
           </div>
         )}
-
-        {/* Waiting State */}
-        {room.status === 'waiting' && (
-          <div className="rounded-lg bg-yellow-50 border-2 border-yellow-200 p-6 text-center">
-            <p className="text-yellow-800 font-semibold text-lg">
-              Waiting for host to start the game...
-            </p>
-          </div>
-        )}
-
         {/* Ticket Display */}
         <div className="rounded-lg bg-white p-6 shadow-lg">
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-xl font-semibold text-gray-900">Your Ticket</h2>
-            <span className="text-sm text-gray-500">
-              ID: {ticket.id.substring(0, 8)}...
-            </span>
+            <div className="flex items-center gap-3">
+              <span className="text-sm text-gray-500">
+                ID: {ticket.id.substring(0, 8)}...
+              </span>
+              <button
+                onClick={() => setIsMarkingMode(!isMarkingMode)}
+                className={`flex items-center gap-2 rounded-lg px-4 py-2 font-medium transition-colors ${
+                  isMarkingMode
+                    ? 'bg-blue-600 text-white hover:bg-blue-700'
+                    : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                }`}
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="h-5 w-5"
+                  viewBox="0 0 20 20"
+                  fill="currentColor"
+                >
+                  <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z" />
+                </svg>
+                {isMarkingMode ? 'Marking Mode ON' : 'Tap to Mark'}
+              </button>
+            </div>
           </div>
+
+          {isMarkingMode && (
+            <div className="mb-4 p-3 bg-blue-50 border border-blue-200 rounded-lg">
+              <p className="text-sm text-blue-800">
+                ✏️ <strong>Marking mode is active.</strong> Tap numbers on your ticket to mark them.
+              </p>
+            </div>
+          )}
 
           {/* Use TicketDisplay Component */}
           <TicketDisplay
             ticketData={ticket.ticket_data}
-            markedNumbers={markedNumbersSet}
+            markedNumbers={manuallyMarkedNumbers}
+            onCellClick={isMarkingMode ? handleNumberClick : undefined}
             size="lg"
           />
         </div>
