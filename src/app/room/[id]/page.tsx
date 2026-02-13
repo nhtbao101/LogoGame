@@ -201,7 +201,7 @@ export default function PlayerRoomPage({
           </div>
         )}
         {/* Ticket Display */}
-        <div className="rounded-lg bg-white p-6 shadow-lg">
+        <div className="rounded-lg bg-white md:p-6 md:shadow-lg p-0 bg-transparent shadow-none">
           {/* Use TetLotoTicket Component */}
           <TetLotoTicket
             data={ticket.ticket_data}
