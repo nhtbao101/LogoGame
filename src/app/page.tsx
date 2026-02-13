@@ -71,9 +71,7 @@ export default function Home() {
       <main className="w-full max-w-md space-y-8">
         <div className="text-center">
           <h1 className="text-4xl font-bold text-gray-900">Loto Game</h1>
-          <p className="mt-2 text-gray-600">
-            Traditional Vietnamese Bingo
-          </p>
+          <p className="mt-2 text-gray-600">Traditional Vietnamese Bingo</p>
         </div>
 
         <div className="rounded-lg bg-white p-8 shadow-lg space-y-6">

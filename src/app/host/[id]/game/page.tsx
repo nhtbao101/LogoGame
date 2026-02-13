@@ -36,7 +36,7 @@ export default function HostGamePage({
     const fetchData = async () => {
       try {
         // Fetch room
-        const roomResponse = await fetch(`/api/rooms/code/${roomId}`);
+        const roomResponse = await fetch(`/api/rooms/${roomId}`);
         if (roomResponse.ok) {
           const roomData = await roomResponse.json();
           setRoom(roomData.room);
@@ -188,9 +188,7 @@ export default function HostGamePage({
 
         {/* Error Message */}
         {error && (
-          <div className="rounded-lg bg-red-50 p-4 text-red-800">
-            {error}
-          </div>
+          <div className="rounded-lg bg-red-50 p-4 text-red-800">{error}</div>
         )}
 
         {/* Number Grid */}
@@ -216,9 +214,10 @@ export default function HostGamePage({
                         disabled={isCalled || isCalling}
                         className={`
                           aspect-square rounded-lg text-lg font-semibold transition-all
-                          ${isCalled
-                            ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
-                            : isSelected
+                          ${
+                            isCalled
+                              ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                              : isSelected
                               ? 'bg-yellow-400 text-gray-900 scale-110'
                               : 'bg-white border-2 border-blue-600 text-blue-600 hover:bg-blue-50 active:scale-95'
                           }
@@ -245,9 +244,10 @@ export default function HostGamePage({
                 key={num}
                 className={`
                   flex h-12 w-12 items-center justify-center rounded-full font-semibold text-white
-                  ${index === calledNumbers.length - 1
-                    ? 'bg-green-600 ring-4 ring-green-200'
-                    : 'bg-blue-600'
+                  ${
+                    index === calledNumbers.length - 1
+                      ? 'bg-green-600 ring-4 ring-green-200'
+                      : 'bg-blue-600'
                   }
                 `}
               >

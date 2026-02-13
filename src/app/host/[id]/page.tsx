@@ -30,7 +30,7 @@ export default function HostRoomPage({
 
     const fetchRoom = async () => {
       try {
-        const response = await fetch(`/api/rooms/code/${roomId}`);
+        const response = await fetch(`/api/rooms/${roomId}`);
         if (!response.ok) throw new Error('Room not found');
 
         const data = await response.json();
@@ -204,8 +204,8 @@ export default function HostRoomPage({
                     room.status === 'waiting'
                       ? 'text-yellow-600'
                       : room.status === 'active'
-                        ? 'text-green-600'
-                        : 'text-gray-600'
+                      ? 'text-green-600'
+                      : 'text-gray-600'
                   }`}
                 >
                   {room.status.charAt(0).toUpperCase() + room.status.slice(1)}
@@ -213,7 +213,9 @@ export default function HostRoomPage({
               </div>
               <div className="flex justify-between">
                 <span className="text-gray-600">Numbers Called:</span>
-                <span className="font-semibold">{calledNumbers.length} / 90</span>
+                <span className="font-semibold">
+                  {calledNumbers.length} / 90
+                </span>
               </div>
               <div className="pt-4">
                 <button
@@ -230,9 +232,7 @@ export default function HostRoomPage({
         {/* Start Game Button */}
         {room.status === 'waiting' && (
           <div className="rounded-lg bg-white p-6 shadow-lg text-center">
-            <p className="text-gray-600 mb-4">
-              Waiting for players to join...
-            </p>
+            <p className="text-gray-600 mb-4">Waiting for players to join...</p>
             <button
               onClick={handleStartGame}
               className="rounded-lg bg-green-600 px-8 py-3 text-lg font-semibold text-white hover:bg-green-700"
