@@ -321,7 +321,7 @@ export async function joinRoomAndGetTicket(
 ): Promise<JoinRoomResult> {
   // Step 1: Validate room exists (check if it's an ID or code)
   let room: Room | null;
-  
+
   // Check if it's a UUID (room ID) or 6-char code
   if (roomIdOrCode.length === 36 && roomIdOrCode.includes('-')) {
     // It's a UUID (room ID)

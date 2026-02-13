@@ -3,6 +3,8 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { getOrCreateGuestId } from '@/utils/guest';
+import { LotoLogo } from '@/components/ui/loto-logo';
+import { Background } from '@/components/layout/background';
 
 export default function Home() {
   const router = useRouter();
@@ -67,82 +69,92 @@ export default function Home() {
   };
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100 p-4">
-      <main className="w-full max-w-md space-y-8">
-        <div className="text-center">
-          <h1 className="text-4xl font-bold text-gray-900">Loto Game</h1>
-          <p className="mt-2 text-gray-600">Traditional Vietnamese Bingo</p>
-        </div>
-
-        <div className="rounded-lg bg-white p-8 shadow-lg space-y-6">
-          {/* Create Room Section */}
-          <div>
-            <h2 className="text-xl font-semibold text-gray-900 mb-4">
-              Host a Game
-            </h2>
-            <button
-              onClick={handleCreateRoom}
-              disabled={isCreating}
-              className="w-full rounded-lg bg-blue-600 px-4 py-3 text-white font-medium hover:bg-blue-700 disabled:bg-blue-400 disabled:cursor-not-allowed transition-colors"
-            >
-              {isCreating ? 'Creating...' : 'Create New Room'}
-            </button>
+    <Background>
+      <div className="flex min-h-screen items-center justify-center p-4">
+        <main className="w-full max-w-md space-y-8">
+          {/* Logo */}
+          <div className="text-center">
+            <LotoLogo size="lg" clickable={false} className="justify-center" />
+            <p className="mt-4 text-lg text-red-800 font-semibold">
+              🎊 Chúc Mừng Năm Mới 🎊
+            </p>
+            <p className="text-gray-700">
+              Trò chơi Lô Tô truyền thống Việt Nam
+            </p>
           </div>
 
-          {/* Divider */}
-          <div className="relative">
-            <div className="absolute inset-0 flex items-center">
-              <div className="w-full border-t border-gray-300" />
-            </div>
-            <div className="relative flex justify-center text-sm">
-              <span className="bg-white px-4 text-gray-500">or</span>
-            </div>
-          </div>
-
-          {/* Join Room Section */}
-          <div>
-            <h2 className="text-xl font-semibold text-gray-900 mb-4">
-              Join a Game
-            </h2>
-            <form onSubmit={handleJoinRoom} className="space-y-4">
-              <div>
-                <label
-                  htmlFor="roomCode"
-                  className="block text-sm font-medium text-gray-700 mb-2"
-                >
-                  Enter Room Code
-                </label>
-                <input
-                  id="roomCode"
-                  type="text"
-                  value={roomCode}
-                  onChange={(e) =>
-                    setRoomCode(e.target.value.toUpperCase().slice(0, 6))
-                  }
-                  placeholder="ABC123"
-                  maxLength={6}
-                  className="w-full rounded-lg border border-gray-300 px-4 py-3 text-center text-2xl font-mono uppercase tracking-widest focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  disabled={isJoining}
-                />
-              </div>
+          <div className="rounded-xl bg-white/95 backdrop-blur p-8 shadow-2xl border-4 border-red-600 space-y-6">
+            {/* Create Room Section */}
+            <div>
+              <h2 className="text-xl font-semibold text-red-800 mb-4 flex items-center gap-2">
+                Làm chủ phòng
+              </h2>
               <button
-                type="submit"
-                disabled={isJoining || roomCode.length !== 6}
-                className="w-full rounded-lg bg-green-600 px-4 py-3 text-white font-medium hover:bg-green-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors"
+                onClick={handleCreateRoom}
+                disabled={isCreating}
+                className="w-full rounded-lg bg-gradient-to-r from-red-600 to-red-700 px-4 py-3 text-white font-medium hover:from-red-700 hover:to-red-800 disabled:from-gray-400 disabled:to-gray-500 disabled:cursor-not-allowed transition-all shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
               >
-                {isJoining ? 'Joining...' : 'Join Room'}
+                {isCreating ? 'Đang tạo...' : 'Tạo phòng mới'}
               </button>
-            </form>
-          </div>
-
-          {/* Error Message */}
-          {error && (
-            <div className="rounded-lg bg-red-50 p-4 text-sm text-red-800">
-              {error}
             </div>
-          )}
-        </div>
-      </main>
-    </div>
+
+            {/* Divider */}
+            <div className="relative">
+              <div className="absolute inset-0 flex items-center">
+                <div className="w-full border-t-2 border-red-200" />
+              </div>
+              <div className="relative flex justify-center text-sm">
+                <span className="bg-white px-4 text-red-600 font-semibold">
+                  hoặc
+                </span>
+              </div>
+            </div>
+
+            {/* Join Room Section */}
+            <div>
+              <h2 className="text-xl font-semibold text-red-800 mb-4 flex items-center gap-2">
+                <span>🎯</span> Tham gia phòng
+              </h2>
+              <form onSubmit={handleJoinRoom} className="space-y-4">
+                <div>
+                  <label
+                    htmlFor="roomCode"
+                    className="block text-sm font-medium text-gray-700 mb-2"
+                  >
+                    Nhập mã phòng
+                  </label>
+                  <input
+                    id="roomCode"
+                    type="text"
+                    value={roomCode}
+                    onChange={(e) =>
+                      setRoomCode(e.target.value.toUpperCase().slice(0, 6))
+                    }
+                    placeholder="ABC123"
+                    maxLength={6}
+                    className="w-full rounded-lg border-2 border-red-300 px-4 py-3 text-center text-2xl font-mono uppercase tracking-widest focus:border-red-500 focus:outline-none focus:ring-2 focus:ring-red-500 bg-yellow-50"
+                    disabled={isJoining}
+                  />
+                </div>
+                <button
+                  type="submit"
+                  disabled={isJoining || roomCode.length !== 6}
+                  className="w-full rounded-lg bg-gradient-to-r from-yellow-500 to-yellow-600 px-4 py-3 text-red-900 font-bold hover:from-yellow-600 hover:to-yellow-700 disabled:from-gray-400 disabled:to-gray-500 disabled:cursor-not-allowed disabled:text-white transition-all shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
+                >
+                  {isJoining ? 'Đang tham gia...' : 'Vào phòng'}
+                </button>
+              </form>
+            </div>
+
+            {/* Error Message */}
+            {error && (
+              <div className="rounded-lg bg-red-100 border-2 border-red-300 p-4 text-sm text-red-800 font-medium">
+                ⚠️ {error}
+              </div>
+            )}
+          </div>
+        </main>
+      </div>
+    </Background>
   );
 }

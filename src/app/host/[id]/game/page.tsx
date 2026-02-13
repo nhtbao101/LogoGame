@@ -3,6 +3,9 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { getOrCreateGuestId } from '@/utils/guest';
+import { Header } from '@/components/layout/header';
+import { Background } from '@/components/layout/background';
+import { Footer } from '@/components/layout/footer';
 import type { Room } from '@/types/loto';
 
 export default function HostGamePage({
@@ -117,7 +120,7 @@ export default function HostGamePage({
   };
 
   const handleEndGame = async () => {
-    if (confirm('Are you sure you want to end the game?')) {
+    if (confirm('Bạn có chắc muốn kết thúc trò chơi?')) {
       router.push('/');
     }
   };
@@ -137,39 +140,36 @@ export default function HostGamePage({
 
   if (!room) {
     return (
-      <div className="flex min-h-screen items-center justify-center">
-        <div className="text-center">
-          <div className="mb-4 h-12 w-12 animate-spin rounded-full border-4 border-blue-600 border-t-transparent mx-auto" />
-          <p className="text-gray-600">Loading game...</p>
+      <Background>
+        <div className="flex min-h-screen items-center justify-center">
+          <div className="text-center bg-white/90 backdrop-blur rounded-xl p-8 shadow-xl border-4 border-red-600">
+            <div className="mb-4 h-12 w-12 animate-spin rounded-full border-4 border-red-600 border-t-transparent mx-auto" />
+            <p className="text-red-800 font-semibold">Đang tải game...</p>
+          </div>
         </div>
-      </div>
+      </Background>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 p-4">
-      <div className="mx-auto max-w-6xl space-y-6">
-        {/* Header */}
-        <div className="flex items-center justify-between rounded-lg bg-white p-4 shadow-lg">
-          <div>
-            <h1 className="text-2xl font-bold text-gray-900">
-              Room: {room.room_code}
-            </h1>
-            <p className="text-sm text-gray-600">
-              {calledNumbers.length} / 90 numbers called
-            </p>
-          </div>
+    <Background>
+      <Header
+        title={`Mã phòng: ${room.room_code}`}
+        subtitle={`Đã gọi: ${calledNumbers.length}/90`}
+        action={
           <button
             onClick={handleEndGame}
-            className="rounded-lg bg-red-600 px-6 py-2 text-white hover:bg-red-700"
+            className="rounded-lg bg-white/90 backdrop-blur px-6 py-2 text-red-700 font-bold hover:bg-white border-2 border-white/50 shadow-lg transition-all"
           >
-            End Game
+            Kết thúc game
           </button>
-        </div>
+        }
+      />
 
+      <div className="mx-auto max-w-6xl space-y-6 p-4">
         {/* Last Called Number */}
         <div className="rounded-lg bg-gradient-to-br from-green-500 to-green-600 p-8 shadow-lg text-center">
-          <p className="text-white text-lg mb-2">Last Called Number</p>
+          <p className="text-white text-lg mb-2">Số vừa gọi</p>
           <div className="text-8xl font-bold text-white">
             {calledNumbers.length > 0
               ? calledNumbers[calledNumbers.length - 1]
@@ -184,30 +184,32 @@ export default function HostGamePage({
             disabled={isCalling || calledNumbers.length === 90}
             className="rounded-lg bg-blue-600 px-6 py-4 text-lg font-semibold text-white hover:bg-blue-700 disabled:bg-gray-400"
           >
-            🎲 Call Random Number
+            🎲 Gọi số ngẫu nhiên
           </button>
           <button
             onClick={() => router.push(`/host/${roomId}`)}
             className="rounded-lg bg-gray-600 px-6 py-4 text-lg font-semibold text-white hover:bg-gray-700"
           >
-            📊 View Room Info
+            📊 Xem thông tin phòng
           </button>
         </div>
 
         {/* Error Message */}
         {error && (
-          <div className="rounded-lg bg-red-50 p-4 text-red-800">{error}</div>
+          <div className="rounded-lg bg-red-100 border-2 border-red-400 p-4 text-red-800 font-semibold">
+            ⚠️ {error}
+          </div>
         )}
 
         {/* Number Grid */}
-        <div className="rounded-lg bg-white p-6 shadow-lg">
-          <h2 className="text-xl font-semibold text-gray-900 mb-4">
-            Select Number to Call
+        <div className="rounded-xl bg-white/95 backdrop-blur p-6 shadow-2xl border-2 border-red-300">
+          <h2 className="text-xl font-semibold text-red-800 mb-6 flex items-center gap-2">
+            <span>🎯</span> Chọn số để gọi
           </h2>
           <div className="space-y-6">
             {numberGroups.map((group) => (
               <div key={group.range}>
-                <p className="text-sm font-semibold text-gray-600 mb-2">
+                <p className="text-sm font-bold text-red-700 mb-3 bg-red-50 px-3 py-1 rounded-lg inline-block">
                   {group.range}
                 </p>
                 <div className="grid grid-cols-5 gap-2 sm:grid-cols-10">
@@ -221,13 +223,13 @@ export default function HostGamePage({
                         onClick={() => handleCallNumber(num)}
                         disabled={isCalled || isCalling}
                         className={`
-                          aspect-square rounded-lg text-lg font-semibold transition-all
+                          aspect-square rounded-lg text-lg font-bold transition-all shadow-md
                           ${
                             isCalled
-                              ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                              ? 'bg-gray-300 text-gray-500 cursor-not-allowed line-through'
                               : isSelected
-                              ? 'bg-yellow-400 text-gray-900 scale-110'
-                              : 'bg-white border-2 border-blue-600 text-blue-600 hover:bg-blue-50 active:scale-95'
+                              ? 'bg-gradient-to-br from-yellow-400 to-yellow-500 text-red-900 scale-110 shadow-xl ring-4 ring-yellow-300'
+                              : 'bg-white border-2 border-red-500 text-red-600 hover:bg-red-50 hover:scale-105 active:scale-95'
                           }
                         `}
                       >
@@ -242,20 +244,20 @@ export default function HostGamePage({
         </div>
 
         {/* Called Numbers History */}
-        <div className="rounded-lg bg-white p-6 shadow-lg">
-          <h2 className="text-xl font-semibold text-gray-900 mb-4">
-            Called Numbers ({calledNumbers.length})
+        <div className="rounded-xl bg-white/95 backdrop-blur p-6 shadow-2xl border-2 border-red-300">
+          <h2 className="text-xl font-semibold text-red-800 mb-4 flex items-center gap-2">
+            <span>📋</span> Lịch sử các số đã gọi ({calledNumbers.length})
           </h2>
           <div className="flex flex-wrap gap-2">
             {calledNumbers.map((num, index) => (
               <span
                 key={num}
                 className={`
-                  flex h-12 w-12 items-center justify-center rounded-full font-semibold text-white
+                  flex h-14 w-14 items-center justify-center rounded-full font-bold text-white shadow-lg transition-all
                   ${
                     index === calledNumbers.length - 1
-                      ? 'bg-green-600 ring-4 ring-green-200'
-                      : 'bg-blue-600'
+                      ? 'bg-gradient-to-br from-green-500 to-green-600 ring-4 ring-green-300 scale-110'
+                      : 'bg-gradient-to-br from-red-600 to-red-700'
                   }
                 `}
               >
@@ -263,11 +265,12 @@ export default function HostGamePage({
               </span>
             ))}
             {calledNumbers.length === 0 && (
-              <p className="text-gray-500">No numbers called yet</p>
+              <p className="text-gray-500 italic">Chưa có số nào được gọi</p>
             )}
           </div>
         </div>
       </div>
-    </div>
+      <Footer />
+    </Background>
   );
 }
