@@ -84,18 +84,14 @@ export async function getRoomByCode(roomCode: string): Promise<Room | null> {
     .from('rooms')
     .select('*')
     .eq('room_code', roomCode.toUpperCase())
-    .single();
+    .maybeSingle();
 
   if (error) {
-    if (error.code === 'PGRST116') {
-      // Not found
-      return null;
-    }
     console.error('Get room by code error:', error);
     throw new Error(`Failed to fetch room: ${error.message}`);
   }
 
-  return data as Room;
+  return data ? (data as Room) : null;
 }
 
 /**
@@ -109,17 +105,14 @@ export async function getRoomById(roomId: string): Promise<Room | null> {
     .from('rooms')
     .select('*')
     .eq('id', roomId)
-    .single();
+    .maybeSingle();
 
   if (error) {
-    if (error.code === 'PGRST116') {
-      return null;
-    }
     console.error('Get room by ID error:', error);
     throw new Error(`Failed to fetch room: ${error.message}`);
   }
 
-  return data as Room;
+  return data ? (data as Room) : null;
 }
 
 /**
@@ -307,7 +300,7 @@ export async function getRoomTickets(roomId: string): Promise<LotoTicket[]> {
  * 3. Creates a new ticket if needed (with uniqueness guarantee)
  * 4. Returns the room and ticket
  *
- * @param roomCode - The 6-character room code
+ * @param roomIdOrCode - The room UUID or 6-character room code
  * @param playerId - The player's guest ID (from localStorage)
  * @param playerName - Optional player name
  * @returns Room and ticket information
@@ -315,17 +308,28 @@ export async function getRoomTickets(roomId: string): Promise<LotoTicket[]> {
  *
  * @example
  * const result = await joinRoomAndGetTicket('ABC123', guestId, 'Player 1');
+ * // or
+ * const result = await joinRoomAndGetTicket(roomId, guestId, 'Player 1');
  * if (result.is_new_ticket) {
  *   console.log('New ticket created!');
  * }
  */
 export async function joinRoomAndGetTicket(
-  roomCode: string,
+  roomIdOrCode: string,
   playerId: string,
   playerName?: string
 ): Promise<JoinRoomResult> {
-  // Step 1: Validate room exists
-  const room = await getRoomByCode(roomCode);
+  // Step 1: Validate room exists (check if it's an ID or code)
+  let room: Room | null;
+  
+  // Check if it's a UUID (room ID) or 6-char code
+  if (roomIdOrCode.length === 36 && roomIdOrCode.includes('-')) {
+    // It's a UUID (room ID)
+    room = await getRoomById(roomIdOrCode);
+  } else {
+    // It's a room code
+    room = await getRoomByCode(roomIdOrCode);
+  }
 
   if (!room) {
     throw new Error('Room not found. Please check the room code.');
