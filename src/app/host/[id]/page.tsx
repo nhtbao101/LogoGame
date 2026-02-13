@@ -128,12 +128,22 @@ export default function HostRoomPage({
         {/* Header */}
         <div className="flex items-center justify-between">
           <h1 className="text-3xl font-bold text-gray-900">Host Room</h1>
-          <button
-            onClick={() => router.push('/')}
-            className="rounded-lg bg-gray-200 px-4 py-2 text-gray-700 hover:bg-gray-300"
-          >
-            Leave
-          </button>
+          <div className="flex gap-2">
+            {calledNumbers.length > 0 && (
+              <button
+                onClick={() => router.push(`/host/${roomId}/game`)}
+                className="rounded-lg bg-blue-600 px-4 py-2 text-white hover:bg-blue-700 font-medium"
+              >
+                Back to Game
+              </button>
+            )}
+            <button
+              onClick={() => router.push('/')}
+              className="rounded-lg bg-gray-200 px-4 py-2 text-gray-700 hover:bg-gray-300"
+            >
+              Leave
+            </button>
+          </div>
         </div>
 
         {/* Room Code Card */}
