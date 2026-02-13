@@ -3,12 +3,9 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { getOrCreateGuestId } from '@/utils/guest';
-import { TicketDisplay } from '@/components/loto/ticket-display';
-import {
-  WinCelebration,
-  WinProgressIndicator
-} from '@/components/loto/win-celebration';
-import { checkWinCondition, getNumbersToWin } from '@/lib/loto/win-detection';
+import { TetLotoTicket } from '@/components/loto/tet-loto-ticket';
+import { WinCelebration } from '@/components/loto/win-celebration';
+import { checkWinCondition } from '@/lib/loto/win-detection';
 import type { Room, LotoTicket } from '@/types/loto';
 
 export default function PlayerRoomPage({
@@ -110,16 +107,13 @@ export default function PlayerRoomPage({
   const winResult = ticket
     ? checkWinCondition(ticket.ticket_data, manuallyMarkedNumbers)
     : { hasWon: false, completedRows: [] };
-  const numbersToWin = ticket
-    ? getNumbersToWin(ticket.ticket_data, manuallyMarkedNumbers)
-    : null;
 
   if (isLoading) {
     return (
       <div className="flex min-h-screen items-center justify-center">
         <div className="text-center">
           <div className="mb-4 h-12 w-12 animate-spin rounded-full border-4 border-blue-600 border-t-transparent mx-auto" />
-          <p className="text-gray-600">Joining room...</p>
+          <p className="text-gray-600">Đang tham gia phòng...</p>
         </div>
       </div>
     );
@@ -129,13 +123,13 @@ export default function PlayerRoomPage({
     return (
       <div className="flex min-h-screen items-center justify-center p-4">
         <div className="text-center">
-          <h1 className="text-2xl font-bold text-red-600 mb-4">Error</h1>
-          <p className="text-gray-600 mb-4">{error || 'Room not found'}</p>
+          <h1 className="text-2xl font-bold text-red-600 mb-4">Lỗi</h1>
+          <p className="text-gray-600 mb-4">{error || 'Không tìm thấy phòng'}</p>
           <button
             onClick={() => router.push('/')}
             className="rounded-lg bg-blue-600 px-6 py-2 text-white hover:bg-blue-700"
           >
-            Go Home
+            Về trang chủ
           </button>
         </div>
       </div>
@@ -149,10 +143,10 @@ export default function PlayerRoomPage({
         <div className="flex items-center justify-between rounded-lg bg-white p-4 shadow-lg">
           <div>
             <h1 className="text-2xl font-bold text-gray-900">
-              Room: {room.room_code}
+              Phòng: {room.room_code}
             </h1>
             <p className="text-sm text-gray-600">
-              Status:{' '}
+              Trạng thái:{' '}
               <span
                 className={`font-semibold ${
                   room.status === 'waiting'
@@ -162,7 +156,7 @@ export default function PlayerRoomPage({
                     : 'text-gray-600'
                 }`}
               >
-                {room.status.charAt(0).toUpperCase() + room.status.slice(1)}
+                {room.status === 'waiting' ? 'Đang chờ' : room.status === 'active' ? 'Đang chơi' : 'Đã kết thúc'}
               </span>
             </p>
           </div>
@@ -170,7 +164,7 @@ export default function PlayerRoomPage({
             onClick={() => router.push('/')}
             className="rounded-lg bg-gray-200 px-4 py-2 text-gray-700 hover:bg-gray-300"
           >
-            Leave
+            Rời phòng
           </button>
         </div>
 
@@ -178,7 +172,7 @@ export default function PlayerRoomPage({
         <div className="rounded-lg bg-white p-4 shadow-lg">
           <div className="flex items-center justify-between mb-2">
             <span className="text-sm font-medium text-gray-700">
-              Numbers Marked
+              Số đã đánh dấu
             </span>
             <span className="text-sm font-semibold text-blue-600">
               {markedCount} / {totalNumbers}
@@ -200,7 +194,7 @@ export default function PlayerRoomPage({
         {/* Last Called Number */}
         {calledNumbers.length > 0 && (
           <div className="rounded-lg bg-gradient-to-br from-blue-500 to-blue-600 p-6 shadow-lg text-center">
-            <p className="text-white text-sm mb-2">Last Called</p>
+            <p className="text-white text-sm mb-2">Số vừa gọi</p>
             <div className="text-6xl font-bold text-white">
               {calledNumbers[calledNumbers.length - 1]}
             </div>
@@ -208,19 +202,11 @@ export default function PlayerRoomPage({
         )}
         {/* Ticket Display */}
         <div className="rounded-lg bg-white p-6 shadow-lg">
-          <div className="flex items-center justify-between mb-4">
-            <h2 className="text-xl font-semibold text-gray-900">LOTO</h2>
-            <span className="text-sm text-gray-500">
-              ID: {ticket.id.substring(0, 8)}...
-            </span>
-          </div>
-
-          {/* Use TicketDisplay Component */}
-          <TicketDisplay
-            ticketData={ticket.ticket_data}
+          {/* Use TetLotoTicket Component */}
+          <TetLotoTicket
+            data={ticket.ticket_data}
             markedNumbers={manuallyMarkedNumbers}
             onCellClick={handleNumberClick}
-            size="lg"
           />
         </div>
 
@@ -234,11 +220,11 @@ export default function PlayerRoomPage({
         {/* Called Numbers History */}
         <div className="rounded-lg bg-white p-6 shadow-lg">
           <h2 className="text-xl font-semibold text-gray-900 mb-4">
-            Called Numbers ({calledNumbers.length})
+            Các số đã gọi ({calledNumbers.length})
           </h2>
           <div className="flex flex-wrap gap-2">
             {calledNumbers.length === 0 ? (
-              <p className="text-gray-500">No numbers called yet</p>
+              <p className="text-gray-500">Chưa có số nào được gọi</p>
             ) : (
               calledNumbers.map((num, index) => (
                 <span
