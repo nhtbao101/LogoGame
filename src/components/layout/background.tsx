@@ -1,17 +1,21 @@
 'use client';
 
 import { cn } from '@/lib/utils';
+import { CherryBlossomRain } from '@/components/effects/cherry-blossom-rain';
+import { FireworksDisplay } from '@/components/effects/fireworks-display';
 
 interface BackgroundProps {
   children: React.ReactNode;
   className?: string;
   variant?: 'default' | 'dark' | 'light';
+  showEffects?: boolean;
 }
 
 export function Background({
   children,
   className,
-  variant = 'default'
+  variant = 'default',
+  showEffects = true
 }: BackgroundProps) {
   const backgrounds = {
     default: 'bg-gradient-to-br from-red-50 via-yellow-50 to-red-100',
@@ -59,8 +63,14 @@ export function Background({
         </div>
       </div>
 
+      {/* Cherry Blossom Rain Effect */}
+      {showEffects && <CherryBlossomRain />}
+
+      {/* Fireworks Display Effect */}
+      {showEffects && <FireworksDisplay />}
+
       {/* Content */}
-      <div className="relative z-10">{children}</div>
+      <div className="relative z-[100]">{children}</div>
     </div>
   );
 }

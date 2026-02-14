@@ -1,3 +1,4 @@
+import { useEffect, useRef } from 'react';
 import { cn } from '@/lib/utils';
 import type { WinPattern } from '@/lib/loto/win-detection';
 
@@ -19,29 +20,29 @@ const patternConfig: Record<
 > = {
   'top-line': {
     emoji: '🎉',
-    title: 'Top Line!',
-    subtitle: 'You completed the first row!',
+    title: 'Kênh rồi bro ơi!',
+    subtitle: 'Bạn đã hoàn thành hàng đầu tiên!',
     bgGradient: 'from-blue-400 to-blue-600',
     textColor: 'text-white'
   },
   'middle-line': {
     emoji: '🎊',
-    title: 'Middle Line!',
-    subtitle: 'You completed the second row!',
+    title: 'Kênh rồi bro ơi!',
+    subtitle: 'Bạn đã hoàn thành hàng thứ hai!',
     bgGradient: 'from-purple-400 to-purple-600',
     textColor: 'text-white'
   },
   'bottom-line': {
     emoji: '🎈',
-    title: 'Bottom Line!',
-    subtitle: 'You completed the third row!',
+    title: 'Kênh rồi bro ơi!',
+    subtitle: 'Bạn đã hoàn thành hàng thứ ba!',
     bgGradient: 'from-pink-400 to-pink-600',
     textColor: 'text-white'
   },
   'full-house': {
     emoji: '🏆',
-    title: 'FULL HOUSE!',
-    subtitle: 'All numbers marked! Congratulations!',
+    title: 'Kênh rồi bro ơi!',
+    subtitle: 'Tất cả số đã được đánh dấu! Chúc mừng!',
     bgGradient: 'from-yellow-400 to-orange-500',
     textColor: 'text-gray-900'
   }
@@ -58,9 +59,21 @@ export function WinCelebration({
   className
 }: WinCelebrationProps) {
   const config = patternConfig[pattern];
+  const celebrationRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    // Scroll to the celebration component when it appears
+    if (celebrationRef.current) {
+      celebrationRef.current.scrollIntoView({
+        behavior: 'smooth',
+        block: 'center'
+      });
+    }
+  }, []);
 
   return (
     <div
+      ref={celebrationRef}
       className={cn(
         'rounded-lg p-8 shadow-lg text-center animate-pulse',
         `bg-gradient-to-br ${config.bgGradient}`,
@@ -89,7 +102,7 @@ export function WinCelebration({
               : 'bg-white text-gray-900 hover:bg-gray-100'
           )}
         >
-          Continue
+          Tiếp tục
         </button>
       )}
 
