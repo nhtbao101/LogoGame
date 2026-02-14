@@ -70,16 +70,23 @@ export function FireworksDisplay() {
     // Create particles for explosion
     const explode = (firework: Firework) => {
       const particleCount = 60 + Math.floor(Math.random() * 40);
+      // Randomly decide: 50% chance for single color, 50% for multi-color
+      const isMultiColor = Math.random() > 0.5;
+
       for (let i = 0; i < particleCount; i++) {
         const angle = (Math.PI * 2 * i) / particleCount;
         const speed = 2 + Math.random() * 3;
+        // Use firework's base color or random color based on isMultiColor
+        const particleColor = isMultiColor
+          ? COLORS[Math.floor(Math.random() * COLORS.length)]
+          : firework.color;
         firework.particles.push({
           x: firework.x,
           y: firework.targetY,
           vx: Math.cos(angle) * speed,
           vy: Math.sin(angle) * speed,
           alpha: 1,
-          color: firework.color,
+          color: particleColor,
           trail: []
         });
       }
@@ -88,8 +95,7 @@ export function FireworksDisplay() {
 
     // Animation loop
     const animate = () => {
-      ctx.fillStyle = 'rgba(0, 0, 0, 0.1)';
-      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
 
       // Launch new fireworks randomly
       if (Math.random() < 0.03 && fireworksRef.current.length < 5) {
@@ -189,7 +195,7 @@ export function FireworksDisplay() {
   return (
     <canvas
       ref={canvasRef}
-      className="fixed inset-0 pointer-events-none z-[10]"
+      className="fixed inset-0 pointer-events-none z-[1000]"
       style={{ background: 'transparent' }}
     />
   );
