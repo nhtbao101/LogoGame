@@ -84,7 +84,7 @@ export default function PlayerRoomPage({
     };
 
     fetchNumbers();
-    const interval = setInterval(fetchNumbers, 100000);
+    const interval = setInterval(fetchNumbers, 10000);
     return () => clearInterval(interval);
   }, [roomId]);
 
