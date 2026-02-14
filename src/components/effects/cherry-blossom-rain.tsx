@@ -12,17 +12,27 @@ interface Petal {
 }
 
 export function CherryBlossomRain() {
-  // Generate 20 petals with random properties
-  const [petals] = useState<Petal[]>(() =>
-    Array.from({ length: 20 }, (_, i) => ({
-      id: i,
-      left: Math.random() * 100, // Random horizontal position (0-100%)
-      animationDuration: 8 + Math.random() * 7, // 8-15 seconds
-      animationDelay: Math.random() * 5, // 0-5 seconds delay
-      size: 0.5 + Math.random() * 1, // 0.5-1.5 size multiplier
-      swayAmount: 20 + Math.random() * 30 // 20-50px sway
-    }))
-  );
+  const [mounted, setMounted] = useState(false);
+  const [petals, setPetals] = useState<Petal[]>([]);
+
+  useEffect(() => {
+    // Generate petals only on client side after mount
+    setPetals(
+      Array.from({ length: 20 }, (_, i) => ({
+        id: i,
+        left: Math.random() * 100,
+        animationDuration: 8 + Math.random() * 7,
+        animationDelay: Math.random() * 5,
+        size: 0.5 + Math.random() * 1,
+        swayAmount: 20 + Math.random() * 30
+      }))
+    );
+    setMounted(true);
+  }, []);
+
+  if (!mounted) {
+    return null;
+  }
 
   return (
     <div className="fixed inset-0 pointer-events-none overflow-hidden z-[200]">
